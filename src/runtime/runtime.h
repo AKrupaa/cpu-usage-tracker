@@ -2,7 +2,9 @@
 #define RUNTIME_H
 
 #include <pthread.h>
+#include <stdbool.h>
 #include "configure.h"
+#include "queue.h"
 
 typedef struct _pt_thread_def_ {
   char* name;
@@ -11,9 +13,24 @@ typedef struct _pt_thread_def_ {
   void *arg;
 } pt_thread_def_t;
 
+typedef struct _pt_queue_def_ {
+  char* name;
+  int size;
+  bool is_block;
+  bool two_way;
+  pthread_mutex_t mutex;
+  pthread_cond_t less;
+  pthread_cond_t more;
+  queue_t *queue;
+} pt_queue_def_t;
+
 void pt_thread_init(void);
 void pt_thread_join(void);
+void pt_queue_init(void);
+char *pt_queue_dequeue(pt_queue_t queue);
+int pt_queue_enqueue(pt_queue_t queue, char *data);
 
-extern const pt_thread_def_t pt_thread_def[pt_thread_N];
+extern pt_thread_def_t const pt_thread_def[pt_thread_N];
+extern pt_queue_def_t const pt_queue_def[pt_queue_N];
 
 #endif /* RUNTIME_H */

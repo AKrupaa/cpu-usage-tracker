@@ -11,6 +11,12 @@ typedef enum _pt_thread_ {
   pt_thread_N
 } pt_thread_t;
 
-typedef enum pt_queue_ { pt_queue_0 = 0 } pt_queue_t;
+typedef enum pt_queue_ {
+  pt_queue_0 = 0,
+  pt_queue_reader_analyzer = pt_queue_0,
+  pt_queue_analyzer_printer,
+  pt_queue_logger,
+  pt_queue_N
+} pt_queue_t;
 
 #endif /* CONFIGURE_H */

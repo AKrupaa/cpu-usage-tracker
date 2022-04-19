@@ -9,6 +9,7 @@
     ],
     "files.associations": {
         "runtime.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "queue.h": "c"
     }
 }

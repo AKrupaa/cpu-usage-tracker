@@ -1,0 +1,78 @@
+#include "queue.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+// Pop the first element from the queue
+char *queue_dequeue(queue_t *queue) {
+  if (queue == NULL) {
+    return NULL;
+  }
+  if (queue->size == 0) {
+    return NULL;
+  }
+
+  char *data = queue->data + queue->head;  // [queue->head];
+  queue->head = (queue->head + strlen(data) + 1) % queue->capacity;
+  queue->size -= strlen(data) + 1;
+  return data;
+}
+
+// enqueue
+// Add an element to the tail of the queue
+// Return 0 if success, -1 if failed
+int queue_enqueue(queue_t *queue, char *data) {
+  if (queue == NULL || data == NULL) {
+    return -1;
+  }
+  if (queue->size + strlen(data) + 1 > queue->capacity) {
+    return -1;
+  }
+
+  char *p = queue->data + queue->tail;
+  strcpy(p, data);
+  queue->tail = (queue->tail + strlen(data) + 1) % queue->capacity;
+  queue->size += strlen(data) + 1;
+  return 0;
+}
+
+// create a queue
+queue_t *queue_create(int capacity) {
+  queue_t *queue = (queue_t *)malloc(sizeof(queue_t));
+  if (queue == NULL) {
+    return NULL;
+  }
+  queue->size = 0;
+  queue->capacity = capacity;
+  queue->head = 0;
+  queue->tail = 0;
+  queue->data = (char *)malloc(sizeof(char *) * capacity);
+  if (queue->data == NULL) {
+    free(queue);
+    return NULL;
+  }
+  return queue;
+}
+
+int queue_get_size(queue_t *queue) {
+  if (queue == NULL) {
+    return -1;
+  }
+  return queue->size;
+}
+
+int queue_get_capacity(queue_t *queue) {
+  if (queue == NULL) {
+    return -1;
+  }
+  return queue->capacity;
+}
+
+int queue_destroy(queue_t *queue) {
+  if (queue == NULL) {
+    return -1;
+  }
+  free(queue->data);
+  free(queue);
+  return 0;
+}
