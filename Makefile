@@ -1,6 +1,6 @@
 # Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
 TARGET_EXEC := tietoevry
-CC := clang
+# CC := clang
 BUILD_DIR := ./build
 SRC_DIRS := ./src
 LDFLAGS += -lpthread

@@ -65,5 +65,7 @@ dkms.conf
 *.vsix
 
 __*
+*.log
+*.tmp
 
 build

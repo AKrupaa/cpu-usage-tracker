@@ -6,5 +6,9 @@
             "binaryPath": "/home/arkadiusz/C/cpu-usage-tracker/build/tietoevry",
             "binaryArgs": []
         }
-    ]
+    ],
+    "files.associations": {
+        "runtime.h": "c",
+        "stdio.h": "c"
+    }
 }
