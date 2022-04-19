@@ -1,0 +1,10 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/arkadiusz/C/cpu-usage-tracker/build",
+            "binaryPath": "/home/arkadiusz/C/cpu-usage-tracker/build/tietoevry",
+            "binaryArgs": []
+        }
+    ]
+}
