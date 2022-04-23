@@ -13,9 +13,8 @@ int main(int argc, char const* argv[]) {
 
   pt_queue_init();
   pt_thread_init();
-  
-  pt_thread_join();
 
+  pt_thread_join();
 
   printf("Goodbye World!\n");
 

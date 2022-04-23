@@ -27,8 +27,8 @@ typedef struct _pt_queue_def_ {
 void pt_thread_init(void);
 void pt_thread_join(void);
 void pt_queue_init(void);
-char *pt_queue_dequeue(pt_queue_t queue);
-int pt_queue_enqueue(pt_queue_t queue, char *data);
+char *pt_queue_dequeue(pt_queue_t queue, int data_size);
+int pt_queue_enqueue(pt_queue_t queue, char *data, int size);
 
 extern pt_thread_def_t const pt_thread_def[pt_thread_N];
 extern pt_queue_def_t const pt_queue_def[pt_queue_N];

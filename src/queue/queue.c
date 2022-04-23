@@ -1,10 +1,11 @@
 #include "queue.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 // Pop the first element from the queue
-char *queue_dequeue(queue_t *queue) {
+char *queue_dequeue(queue_t *queue, int data_size) {
   if (queue == NULL) {
     return NULL;
   }
@@ -13,26 +14,32 @@ char *queue_dequeue(queue_t *queue) {
   }
 
   char *data = queue->data + queue->head;  // [queue->head];
-  queue->head = (queue->head + strlen(data) + 1) % queue->capacity;
-  queue->size -= strlen(data) + 1;
+  // queue->head = (queue->head + strlen(data) + 1) % queue->capacity;
+  queue->head = (queue->head + data_size) % queue->capacity;
+  // queue->size -= strlen(data) + 1;
+  queue->size -= data_size;
   return data;
 }
 
 // enqueue
 // Add an element to the tail of the queue
 // Return 0 if success, -1 if failed
-int queue_enqueue(queue_t *queue, char *data) {
+int queue_enqueue(queue_t *queue, char *data, int data_size) {
   if (queue == NULL || data == NULL) {
     return -1;
   }
-  if (queue->size + strlen(data) + 1 > queue->capacity) {
+  // if (queue->size + strlen(data) + 1 > queue->capacity) {
+  if (queue->size + data_size > queue->capacity) {
     return -1;
   }
 
   char *p = queue->data + queue->tail;
-  strcpy(p, data);
-  queue->tail = (queue->tail + strlen(data) + 1) % queue->capacity;
-  queue->size += strlen(data) + 1;
+  // strcpy(p, data);
+  memcpy(p, data, data_size);
+  // queue->tail = (queue->tail + strlen(data) + 1) % queue->capacity;
+  queue->tail = (queue->tail + data_size) % queue->capacity;
+  // queue->size += strlen(data) + 1;
+  queue->size += data_size;
   return 0;
 }
 

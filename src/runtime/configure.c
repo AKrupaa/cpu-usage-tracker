@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "analyzer.h"
+#include "cpu_info.h"
 #include "logger.h"
 #include "printer.h"
 #include "reader.h"
@@ -20,7 +21,7 @@ pt_thread_def_t const pt_thread_def[pt_thread_N] = {
 pt_queue_def_t const pt_queue_def[pt_queue_N] = {
     {
         .name = "Reader->Analyzer",
-        .size = 1000,
+        //.size = (PROC_LINE_LENGTH + 1) * 4,
         .is_block = true,
     },
     {

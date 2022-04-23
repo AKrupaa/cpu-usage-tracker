@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "configure.h"
+#include "cpu_info.h"
 
 pthread_t pt_threads[pt_thread_N];
 pt_queue_def_t pt_queues[pt_queue_N];
@@ -39,7 +40,12 @@ void pt_queue_init(void) {
     pt_queue_def_t *q = pt_queues + queue;
     *q = *def;
 
-    if (queue_init(q, pt_queue_def[queue].size) != 0)
+    if (queue == pt_queue_reader_analyzer) {
+      int cpus = get_cpu_count();
+      q->size = (PROC_LINE_LENGTH + 1) * cpus * 4;
+    }
+
+    if (queue_init(q, q->size) != 0)
       while (1)
         ;
 
@@ -55,13 +61,13 @@ void pt_queue_init(void) {
   }
 }
 
-char *pt_queue_dequeue(pt_queue_t queue) {
+char *pt_queue_dequeue(pt_queue_t queue, int data_size) {
   pt_queue_def_t *q = pt_queues + queue;
   pthread_mutex_lock(&q->mutex);
   while (queue_get_size(q->queue) == 0) {
     pthread_cond_wait(&q->more, &q->mutex);
   }
-  char *data = queue_dequeue(q->queue);
+  char *data = queue_dequeue(q->queue, data_size);
 
   pthread_cond_signal(&q->less);
   pthread_mutex_unlock(&q->mutex);
@@ -69,7 +75,7 @@ char *pt_queue_dequeue(pt_queue_t queue) {
   return data;
 }
 
-int pt_queue_enqueue(pt_queue_t queue, char *data) {
+int pt_queue_enqueue(pt_queue_t queue, char *data, int size) {
   pt_queue_def_t *q = pt_queues + queue;
   pthread_mutex_lock(&q->mutex);
 
@@ -77,7 +83,7 @@ int pt_queue_enqueue(pt_queue_t queue, char *data) {
     pthread_cond_wait(&q->less, &q->mutex);
   }
 
-  int ret = queue_enqueue(q->queue, data);
+  int ret = queue_enqueue(q->queue, data, size);
   pthread_cond_signal(&q->more);
 
   pthread_mutex_unlock(&q->mutex);

@@ -1,3 +1,6 @@
+#ifndef QUEUE_H
+#define QUEUE_H
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -11,12 +14,12 @@ typedef struct queue_t {
 } queue_t;
 
 // Pop the first element from the queue
-char *queue_dequeue(queue_t *queue);
+char *queue_dequeue(queue_t *queue, int data_size);
 
 // enqueue
 // Add an element to the tail of the queue
 // Return 0 if success, -1 if failed
-int queue_enqueue(queue_t *queue, char *data);
+int queue_enqueue(queue_t *queue, char *data, int size);
 
 queue_t *queue_create(int capacity);
 
@@ -24,3 +27,5 @@ int queue_get_size(queue_t *queue);
 int queue_get_capacity(queue_t *queue);
 
 int queue_destroy(queue_t *queue);
+
+#endif  // QUEUE_H
