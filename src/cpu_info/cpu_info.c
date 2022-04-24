@@ -268,14 +268,10 @@ int get_percentage_usage_of_CPU(char* old, char* new, char* buffer) {
     double cpuUsagePercentage =
         (double)((totalDiff - idleDiff) * 100) / totalDiff;
 
-    // printf("CPU %d: %f\n", i, cpuUsagePercentage);
-    // sprintf(buffer, "%f", cpuUsagePercentage);
-    // append to buffer
-    sprintf(buffer + sizeof(double) * i, "%f", cpuUsagePercentage);
+    sprintf(buffer + sizeof(double) * i, "%5.2f ", cpuUsagePercentage);
   }
-
-  free(prevCPU);
-  free(currCPU);
+  // free(prevCPU);
+  // free(currCPU);
 
   return 0;
 }

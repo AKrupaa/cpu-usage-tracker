@@ -31,7 +31,7 @@ void *reader_func(void *vargp) {
       printf("Error enqueueing\n");
     }
 
-    sleep(10);
+    sleep(2);
   }
 
   return NULL;
