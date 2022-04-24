@@ -19,4 +19,22 @@ typedef enum pt_queue_ {
   pt_queue_N
 } pt_queue_t;
 
+typedef enum pt_mutex_ {
+  // mutex for queues
+  pt_mutex_queue_0 = 0,
+  pt_mutex_reader_analyzer = pt_mutex_queue_0,
+  pt_mutex_analyzer_printer,
+  pt_mutex_logger,
+  pt_mutex_queue_N,
+  // mutex for threads
+  pt_mutex_threads_alive_0,
+  pt_mutex_reader_alive = pt_mutex_threads_alive_0,
+  pt_mutex_analyzer_alive,
+  pt_mutex_printer_alive,
+  pt_mutex_watchdog_alive,
+  pt_mutex_logger_alive,
+  pt_mutex_threads_alive_N,
+  pt_mutex_N = pt_mutex_threads_alive_N,
+} pt_mutex_t;
+
 #endif /* CONFIGURE_H */

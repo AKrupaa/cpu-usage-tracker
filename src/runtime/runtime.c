@@ -10,9 +10,15 @@
 pthread_t pt_threads[pt_thread_N];
 pt_queue_def_t pt_queues[pt_queue_N];
 pthread_cond_t pt_conds[2 * pt_queue_N] = {PTHREAD_COND_INITIALIZER};
-pthread_mutex_t pt_mutexs[pt_queue_N] = {PTHREAD_MUTEX_INITIALIZER};
+pthread_mutex_t pt_mutexs[pt_mutex_N] = {PTHREAD_MUTEX_INITIALIZER};
+bool pt_thread_alive[pt_thread_N] = {false};
 
 static int queue_init(pt_queue_def_t *queue, int size);
+
+void pt_runtime_init(void) {
+  pt_queue_init();
+  pt_thread_init();
+}
 
 void pt_thread_init(void) {
   for (pt_thread_t thread = pt_thread_0; thread < pt_thread_N; thread++) {
@@ -33,6 +39,39 @@ void pt_thread_join(void) {
         ;
   }
 }
+
+bool pt_is_alive(pt_mutex_t mutex) {
+  // pthread_mutex_lock(&pt_thread_def[thread].mutex_alive);
+  // int alive = pt_thread_def[thread].mutex_alive.__data.__count;
+  // pthread_mutex_unlock(&pt_thread_def[thread].mutex_alive);
+  if (mutex == pt_mutex_watchdog_alive) {
+    return true;
+  }
+  pthread_mutex_t *def = pt_mutexs + mutex;
+  pthread_mutex_lock(def);
+  bool alive = pt_thread_alive[mutex - pt_mutex_queue_N];
+  pt_thread_alive[mutex - pt_mutex_queue_N] = false;
+  pthread_mutex_unlock(def);
+
+  return alive;
+}
+void pt_set_alive(pt_mutex_t mutex) {
+  pthread_mutex_t *def = pt_mutexs + mutex;
+  pthread_mutex_lock(def);
+
+  pt_thread_alive[mutex - pt_mutex_queue_N] = true;
+
+  pthread_mutex_unlock(def);
+}
+
+// void pt_mutex_init(void) {
+//   for (pt_mutex_t mut = pt_mutex_0; mut < pt_mutex_N; mut++) {
+//     pthread_mutex_t *mutex = pt_mutexs + mut;
+//     if (pthread_mutex_init(mutex, NULL) != 0)
+//       while (1)
+//         ;
+//   }
+// }
 
 void pt_queue_init(void) {
   for (pt_queue_t queue = pt_queue_0; queue < pt_queue_N; queue++) {
@@ -71,7 +110,6 @@ char *pt_queue_dequeue(pt_queue_t queue, int data_size) {
 
   pthread_cond_signal(&q->less);
   pthread_mutex_unlock(&q->mutex);
-
   return data;
 }
 

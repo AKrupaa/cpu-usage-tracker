@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "cpu_info.h"
 #include "runtime.h"
 
 static char *trim_white_space(char *str) {
@@ -39,6 +40,7 @@ void *printer_func(void *vargp) {
   printf("\n");
 
   while (1) {
+    pt_set_alive(pt_mutex_printer_alive);
     char *text = pt_queue_dequeue(pt_queue_analyzer_printer,
                                   sizeof(double) * cpus);  // four spaces
 

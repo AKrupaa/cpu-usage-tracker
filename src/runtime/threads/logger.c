@@ -4,12 +4,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "runtime.h"
+
 void *logger_func(void *vargp) {
   (void)vargp;
-//   while (1) {
-    printf("Hello logger\n");
-    // sleep(10);
-//   }
+
+  while (1) {
+    pt_set_alive(pt_mutex_logger_alive);
+    sleep(10);
+  }
 
   return NULL;
 }

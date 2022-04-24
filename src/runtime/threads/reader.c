@@ -13,7 +13,9 @@ void *reader_func(void *vargp) {
   int cpus = get_cpu_count();
   int buffer_size = sizeof(char) * (PROC_LINE_LENGTH + 1) * cpus;
   char *buffer = malloc(buffer_size);
+
   while (1) {
+    pt_set_alive(pt_mutex_reader_alive);
     char *raw_cpu_info = get_CPU_raw_data(buffer, cpus);
 
     if (raw_cpu_info[0] == '\0') {
@@ -31,7 +33,7 @@ void *reader_func(void *vargp) {
       printf("Error enqueueing\n");
     }
 
-    sleep(2);
+    sleep(1);
   }
 
   return NULL;

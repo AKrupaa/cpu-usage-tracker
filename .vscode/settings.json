@@ -12,6 +12,7 @@
         "stdio.h": "c",
         "queue.h": "c",
         "analyzer.h": "c",
-        "cpu_info.h": "c"
+        "cpu_info.h": "c",
+        "stdbool.h": "c"
     }
 }

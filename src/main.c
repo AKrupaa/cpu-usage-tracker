@@ -10,9 +10,7 @@ int main(int argc, char const* argv[]) {
   (void)argv;
 
   printf("Hello World!\n");
-
-  pt_queue_init();
-  pt_thread_init();
+  pt_runtime_init();
 
   pt_thread_join();
 
