@@ -12,11 +12,13 @@ char *queue_dequeue(queue_t *queue, int data_size) {
   if (queue->size == 0) {
     return NULL;
   }
+  char *data = queue->data + queue->head;
 
-  char *data = queue->data + queue->head;  // [queue->head];
-  // queue->head = (queue->head + strlen(data) + 1) % queue->capacity;
+  if (data_size == 0) {
+    data_size = strlen(data) + 1;
+  }
+
   queue->head = (queue->head + data_size) % queue->capacity;
-  // queue->size -= strlen(data) + 1;
   queue->size -= data_size;
   return data;
 }
@@ -28,7 +30,7 @@ int queue_enqueue(queue_t *queue, char *data, int data_size) {
   if (queue == NULL || data == NULL) {
     return -1;
   }
-  // if (queue->size + strlen(data) + 1 > queue->capacity) {
+
   if (queue->size + data_size > queue->capacity) {
     return -1;
   }
@@ -36,9 +38,7 @@ int queue_enqueue(queue_t *queue, char *data, int data_size) {
   char *p = queue->data + queue->tail;
   // strcpy(p, data);
   memcpy(p, data, data_size);
-  // queue->tail = (queue->tail + strlen(data) + 1) % queue->capacity;
   queue->tail = (queue->tail + data_size) % queue->capacity;
-  // queue->size += strlen(data) + 1;
   queue->size += data_size;
   return 0;
 }
