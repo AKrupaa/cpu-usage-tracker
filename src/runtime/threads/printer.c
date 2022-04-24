@@ -31,7 +31,6 @@ void *printer_func(void *vargp) {
   (void)vargp;
 
   unsigned int cpus = get_cpu_count();
-  char *msg = malloc(sizeof(char) * 30);
 
   for (unsigned int j = 0; j < cpus; j++) {
     if (j == 0)
@@ -42,6 +41,7 @@ void *printer_func(void *vargp) {
   printf("\n");
 
   while (pt_is_alive(pt_mutex_printer_alive)) {
+    char *msg = malloc(sizeof(char) * 30);
     pt_set_alive(pt_mutex_printer_alive, true);
 
     char *text = pt_queue_dequeue(pt_queue_analyzer_printer,
@@ -51,7 +51,7 @@ void *printer_func(void *vargp) {
       continue;
     }
 
-    msg = "Printer prints...";
+    strcpy(msg, "Printer prints...");
     pt_queue_enqueue(pt_queue_logger, msg, strlen(msg) + 1);
 
     for (unsigned long i = 0; i < cpus; i++) {
@@ -59,11 +59,10 @@ void *printer_func(void *vargp) {
       printf("%.*s%%\t\t", (int)sizeof(double), data);
     }
     printf("\n");
-
-    msg = "Printer ends printing.";
+    strcpy(msg, "Printer ends printing.");
     pt_queue_enqueue(pt_queue_logger, msg, strlen(msg) + 1);
+    free(msg);
   }
 
-  free(msg);
   return NULL;
 }
