@@ -6,11 +6,11 @@ SRC_DIRS := ./src
 LDFLAGS += -lpthread
 
 ifeq ($(CC), gcc)
-	CFLAGS := -std=c99 -g -Wall -Wextra -pedantic
+	CFLAGS := -std=gnu99 -g -Wall -Wextra -pedantic
 else ifeq ($(CC), clang)
-	CFLAGS := -std=c99 -g -Weverything
+	CFLAGS := -std=gnu99 -g -Weverything
 else 
-	CFLAGS := -std=c99 -g -Wall -Wextra -pedantic
+	CFLAGS := -std=gnu99 -g -Wall -Wextra -pedantic
 endif
 
 # Find all the C files we want to compile

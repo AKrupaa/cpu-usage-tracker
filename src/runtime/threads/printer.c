@@ -41,8 +41,8 @@ void *printer_func(void *vargp) {
   }
   printf("\n");
 
-  while (1) {
-    pt_set_alive(pt_mutex_printer_alive);
+  while (pt_is_alive(pt_mutex_printer_alive)) {
+    pt_set_alive(pt_mutex_printer_alive, true);
 
     char *text = pt_queue_dequeue(pt_queue_analyzer_printer,
                                   sizeof(double) * cpus);  // four spaces
@@ -64,5 +64,6 @@ void *printer_func(void *vargp) {
     pt_queue_enqueue(pt_queue_logger, msg, strlen(msg) + 1);
   }
 
+  free(msg);
   return NULL;
 }

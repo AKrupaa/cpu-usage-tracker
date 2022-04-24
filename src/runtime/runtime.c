@@ -1,21 +1,34 @@
 #include "runtime.h"
 
 #include <pthread.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "configure.h"
 #include "cpu_info.h"
+
+volatile sig_atomic_t done = 0;
+
+void term(int signum);
 
 pthread_t pt_threads[pt_thread_N];
 pt_queue_def_t pt_queues[pt_queue_N];
 pthread_cond_t pt_conds[2 * pt_queue_N] = {PTHREAD_COND_INITIALIZER};
 pthread_mutex_t pt_mutexs[pt_mutex_N] = {PTHREAD_MUTEX_INITIALIZER};
-bool pt_thread_alive[pt_thread_N] = {false};
+bool pt_thread_alive[pt_thread_N] = {true};
 
 static int queue_init(pt_queue_def_t *queue, int size);
+int queue_deinit(pt_queue_def_t *queue);
 
 void pt_runtime_init(void) {
+  struct sigaction action;
+  memset(&action, 0, sizeof(action));
+  action.sa_handler = term;
+  sigaction(SIGTERM, &action, NULL);
+
   pt_queue_init();
   pt_thread_init();
 }
@@ -24,6 +37,8 @@ void pt_thread_init(void) {
   for (pt_thread_t thread = pt_thread_0; thread < pt_thread_N; thread++) {
     pt_thread_def_t const *def = pt_thread_def + thread;
     pthread_t *pt = pt_threads + thread;
+
+    pt_thread_alive[thread] = true;
 
     if (pthread_create(pt, def->attr, def->func, def->arg) != 0)
       while (1)
@@ -44,22 +59,19 @@ bool pt_is_alive(pt_mutex_t mutex) {
   // pthread_mutex_lock(&pt_thread_def[thread].mutex_alive);
   // int alive = pt_thread_def[thread].mutex_alive.__data.__count;
   // pthread_mutex_unlock(&pt_thread_def[thread].mutex_alive);
-  if (mutex == pt_mutex_watchdog_alive) {
-    return true;
-  }
   pthread_mutex_t *def = pt_mutexs + mutex;
   pthread_mutex_lock(def);
   bool alive = pt_thread_alive[mutex - pt_mutex_queue_N];
-  pt_thread_alive[mutex - pt_mutex_queue_N] = false;
   pthread_mutex_unlock(def);
 
   return alive;
 }
-void pt_set_alive(pt_mutex_t mutex) {
+
+void pt_set_alive(pt_mutex_t mutex, bool status) {
   pthread_mutex_t *def = pt_mutexs + mutex;
   pthread_mutex_lock(def);
 
-  pt_thread_alive[mutex - pt_mutex_queue_N] = true;
+  pt_thread_alive[mutex - pt_mutex_queue_N] = status;
 
   pthread_mutex_unlock(def);
 }
@@ -135,4 +147,28 @@ static int queue_init(pt_queue_def_t *queue, int size) {
     return -1;
   }
   return 0;
+}
+
+int queue_deinit(pt_queue_def_t *queue) {
+  queue_destroy(queue->queue);
+  return 0;
+}
+
+void term(int signum) {
+  if (signum != SIGTERM) return;
+
+  for (pt_mutex_t alive = pt_mutex_threads_alive_0;
+       alive < pt_mutex_threads_alive_N; alive++) {
+    pt_set_alive(alive, false);
+    while (pt_is_alive(alive))
+      ;
+  }
+
+  for (pt_queue_t queue = pt_queue_0; queue < pt_queue_N; queue++) {
+    pt_queue_def_t *q = pt_queues + queue;
+    queue_deinit(q);
+  }
+
+  printf("Exiting...\n");
+  exit(0);
 }

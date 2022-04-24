@@ -17,8 +17,8 @@ void *analyzer_func(void *vargp) {
   char *buffer = malloc(buffer_size);
   char *msg = malloc(sizeof(char) * 30);
 
-  while (1) {
-    pt_set_alive(pt_mutex_analyzer_alive);
+  while (pt_is_alive(pt_mutex_analyzer_alive)) {
+    pt_set_alive(pt_mutex_analyzer_alive, true);
 
     char *old = pt_queue_dequeue(pt_queue_reader_analyzer,
                                  (PROC_LINE_LENGTH + 1) * cpus);
@@ -44,5 +44,8 @@ void *analyzer_func(void *vargp) {
     pt_queue_enqueue(pt_queue_logger, msg, strlen(msg) + 1);
   }
 
+
+  free(buffer);
+  free(msg);
   return NULL;
 }

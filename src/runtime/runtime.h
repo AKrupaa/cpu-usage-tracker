@@ -34,7 +34,8 @@ void pt_runtime_init(void);
 char *pt_queue_dequeue(pt_queue_t queue, int data_size);
 int pt_queue_enqueue(pt_queue_t queue, char *data, int size);
 bool pt_is_alive(pt_mutex_t mutex);
-void pt_set_alive(pt_mutex_t thread);
+void pt_set_alive(pt_mutex_t mutex, bool status);
+void pt_set_dead(pt_mutex_t mutex);
 
 extern pt_thread_def_t const pt_thread_def[pt_thread_N];
 extern pt_queue_def_t const pt_queue_def[pt_queue_N];

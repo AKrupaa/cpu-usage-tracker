@@ -9,12 +9,8 @@ int main(int argc, char const* argv[]) {
   (void)argc;
   (void)argv;
 
-  printf("Hello World!\n");
   pt_runtime_init();
-
   pt_thread_join();
-
-  printf("Goodbye World!\n");
 
   return 0;
 }

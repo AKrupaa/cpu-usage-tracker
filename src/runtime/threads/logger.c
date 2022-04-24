@@ -10,8 +10,8 @@
 void *logger_func(void *vargp) {
   (void)vargp;
 
-  while (1) {
-    pt_set_alive(pt_mutex_logger_alive);
+  while (pt_is_alive(pt_mutex_logger_alive)) {
+    pt_set_alive(pt_mutex_logger_alive, true);
 
     FILE *logger_file = fopen(LOGGER_FILE_NAME, "a");
 

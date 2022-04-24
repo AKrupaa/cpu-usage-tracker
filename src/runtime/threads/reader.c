@@ -15,8 +15,8 @@ void *reader_func(void *vargp) {
   char *buffer = malloc(buffer_size);
   char *msg = malloc(sizeof(char) * 30);
 
-  while (1) {
-    pt_set_alive(pt_mutex_reader_alive);
+  while (pt_is_alive(pt_mutex_reader_alive)) {
+    pt_set_alive(pt_mutex_reader_alive, true);
 
     msg = "Reading in progress...";
     pt_queue_enqueue(pt_queue_logger, msg, strlen(msg) + 1);
@@ -42,6 +42,8 @@ void *reader_func(void *vargp) {
 
     sleep(1);
   }
+
+  free(buffer);
 
   return NULL;
 }
