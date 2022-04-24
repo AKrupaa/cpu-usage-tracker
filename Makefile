@@ -8,7 +8,7 @@ LDFLAGS += -lpthread
 ifeq ($(CC), gcc)
 	CFLAGS := -std=gnu99 -g -Wall -Wextra -pedantic
 else ifeq ($(CC), clang)
-	CFLAGS := -std=gnu99 -g -Weverything
+	CFLAGS := -std=gnu99 -g -Wno-disabled-macro-expansion -Wno-padded -Weverything 
 else 
 	CFLAGS := -std=gnu99 -g -Wall -Wextra -pedantic
 endif

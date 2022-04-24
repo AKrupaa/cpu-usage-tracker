@@ -30,10 +30,10 @@ static char *trim_white_space(char *str) {
 void *printer_func(void *vargp) {
   (void)vargp;
 
-  int cpus = get_cpu_count();
+  unsigned int cpus = get_cpu_count();
   char *msg = malloc(sizeof(char) * 30);
 
-  for (int j = 0; j < cpus; j++) {
+  for (unsigned int j = 0; j < cpus; j++) {
     if (j == 0)
       printf("CPU\t\t");
     else
@@ -54,7 +54,7 @@ void *printer_func(void *vargp) {
     msg = "Printer prints...";
     pt_queue_enqueue(pt_queue_logger, msg, strlen(msg) + 1);
 
-    for (int i = 0; i < cpus; i++) {
+    for (unsigned long i = 0; i < cpus; i++) {
       char *data = trim_white_space(text + sizeof(double) * i);
       printf("%.*s%%\t\t", (int)sizeof(double), data);
     }

@@ -5,7 +5,7 @@
 #include <string.h>
 
 // Pop the first element from the queue
-char *queue_dequeue(queue_t *queue, int data_size) {
+char *queue_dequeue(queue_t *queue, size_t data_size) {
   if (queue == NULL) {
     return NULL;
   }
@@ -26,7 +26,7 @@ char *queue_dequeue(queue_t *queue, int data_size) {
 // enqueue
 // Add an element to the tail of the queue
 // Return 0 if success, -1 if failed
-int queue_enqueue(queue_t *queue, char *data, int data_size) {
+int queue_enqueue(queue_t *queue, char *data, size_t data_size) {
   if (queue == NULL || data == NULL) {
     return -1;
   }
@@ -44,7 +44,7 @@ int queue_enqueue(queue_t *queue, char *data, int data_size) {
 }
 
 // create a queue
-queue_t *queue_create(int capacity) {
+queue_t *queue_create(size_t capacity) {
   queue_t *queue = (queue_t *)malloc(sizeof(queue_t));
   if (queue == NULL) {
     return NULL;
@@ -65,14 +65,14 @@ int queue_get_size(queue_t *queue) {
   if (queue == NULL) {
     return -1;
   }
-  return queue->size;
+  return (int)queue->size;
 }
 
 int queue_get_capacity(queue_t *queue) {
   if (queue == NULL) {
     return -1;
   }
-  return queue->capacity;
+  return (int)queue->capacity;
 }
 
 int queue_destroy(queue_t *queue) {

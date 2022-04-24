@@ -60,10 +60,10 @@ typedef struct CPUData_ {
   bool online;
 } CPUData;
 
-int get_cpu_count();
+unsigned int get_cpu_count(void);
 // static CPUData* getCPUsUsage(int cpus);
-int getPercentageUsageOfCPUs();
-char* get_CPU_raw_data(char* buffer, int cpus);
+int getPercentageUsageOfCPUs(void);
+char* get_CPU_raw_data(char* buffer, unsigned int cpus);
 int get_percentage_usage_of_CPU(char* old, char* new, char* buffer);
 
-#endif /* PROCESS_H */
+#endif // PROCESS_H

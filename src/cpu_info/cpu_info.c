@@ -16,18 +16,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int get_cpu_count() {
-  return get_nprocs() + 1;  // +1 for cpu
+unsigned int get_cpu_count() {
+  return (unsigned int) get_nprocs() + 1;  // +1 for cpu
 }
 
-char* get_CPU_raw_data(char* buffer, int cpus) {
+char * get_CPU_raw_data(char* buffer, unsigned int cpus) {
   FILE* file = fopen(PROCSTATFILE, "r");
   if (file == NULL) {
     printf("Error: %s\n", strerror(errno));
   }
 
   char line[PROC_LINE_LENGTH + 1];
-  int cpu = 0;
+  unsigned int cpu = 0;
 
   while (cpu < cpus) {
     char* ok = fgets(line, PROC_LINE_LENGTH, file);
@@ -47,11 +47,12 @@ char* get_CPU_raw_data(char* buffer, int cpus) {
 }
 
 static CPUData* calulcate_CPU_usage(char* buffer) {
-  int cpus = get_cpu_count();
-  CPUData* cpuData = malloc(sizeof(CPUData) * cpus);
+  unsigned int cpus = get_cpu_count();
+  // CPUData* cpuData = malloc(sizeof(CPUData) * cpus);
+  CPUData* cpuData = calloc(sizeof(CPUData), (unsigned long) cpus);
 
   assert(cpus > 0);
-  for (int i = 0; i < cpus; i++) {
+  for (unsigned int i = 0; i < cpus; i++) {
     // char buffer[PROC_LINE_LENGTH + 1];
     unsigned long long int usertime, nicetime, systemtime, idletime;
     unsigned long long int ioWait, irq, softIrq, steal, guest, guestnice;
@@ -76,7 +77,7 @@ static CPUData* calulcate_CPU_usage(char* buffer) {
                    "%16llu %16llu %16llu",
                    &cpuid, &usertime, &nicetime, &systemtime, &idletime,
                    &ioWait, &irq, &softIrq, &steal, &guest, &guestnice);
-      assert(cpuid == i - 1);
+      assert(cpuid == (int)i - 1);
     }
 
     // Guest time is already accounted in usertime
@@ -124,12 +125,12 @@ static CPUData* calulcate_CPU_usage(char* buffer) {
 }
 
 int get_percentage_usage_of_CPU(char* old, char* new, char* buffer) {
-  int cpus = get_cpu_count();
+  unsigned int cpus = get_cpu_count();
 
   CPUData* prevCPU = calulcate_CPU_usage(old);
   CPUData* currCPU = calulcate_CPU_usage(new);
 
-  for (int i = 0; i < cpus; i++) {
+  for (unsigned int i = 0; i < cpus; i++) {
     unsigned long long int prevIdle =
         prevCPU[i].idleTime + prevCPU[i].ioWaitTime;
     unsigned long long int idle = currCPU[i].idleTime + currCPU[i].ioWaitTime;
@@ -148,7 +149,7 @@ int get_percentage_usage_of_CPU(char* old, char* new, char* buffer) {
     unsigned long long int idleDiff = idle - prevIdle;
 
     double cpuUsagePercentage =
-        (double)((totalDiff - idleDiff) * 100) / totalDiff;
+        (double)((totalDiff - idleDiff) * 100) / (double)totalDiff;
 
     sprintf(buffer + sizeof(double) * i, "%5.2f ", cpuUsagePercentage);
   }

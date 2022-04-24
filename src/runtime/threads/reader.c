@@ -10,8 +10,8 @@
 void *reader_func(void *vargp) {
   (void)vargp;
 
-  int cpus = get_cpu_count();
-  int buffer_size = sizeof(char) * (PROC_LINE_LENGTH + 1) * cpus;
+  unsigned int cpus = get_cpu_count();
+  size_t buffer_size = (size_t)(sizeof(char) * (PROC_LINE_LENGTH + 1) * cpus);
   char *buffer = malloc(buffer_size);
   char *msg = malloc(sizeof(char) * 30);
 
@@ -43,6 +43,7 @@ void *reader_func(void *vargp) {
     sleep(1);
   }
 
+  free(msg);
   free(buffer);
 
   return NULL;

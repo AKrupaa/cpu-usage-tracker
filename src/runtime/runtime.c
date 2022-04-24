@@ -10,17 +10,17 @@
 #include "configure.h"
 #include "cpu_info.h"
 
-volatile sig_atomic_t done = 0;
+// volatile static sig_atomic_t done = 0;
 
 void term(int signum);
 
-pthread_t pt_threads[pt_thread_N];
-pt_queue_def_t pt_queues[pt_queue_N];
-pthread_cond_t pt_conds[2 * pt_queue_N] = {PTHREAD_COND_INITIALIZER};
-pthread_mutex_t pt_mutexs[pt_mutex_N] = {PTHREAD_MUTEX_INITIALIZER};
-bool pt_thread_alive[pt_thread_N] = {true};
+static pthread_t pt_threads[pt_thread_N];
+static pt_queue_def_t pt_queues[pt_queue_N];
+static pthread_cond_t pt_conds[2 * pt_queue_N] = {PTHREAD_COND_INITIALIZER};
+static pthread_mutex_t pt_mutexs[pt_mutex_N] = {PTHREAD_MUTEX_INITIALIZER};
+static bool pt_thread_alive[pt_thread_N] = {true};
 
-static int queue_init(pt_queue_def_t *queue, int size);
+static int queue_init(pt_queue_def_t *queue, size_t size);
 int queue_deinit(pt_queue_def_t *queue);
 
 void pt_runtime_init(void) {
@@ -92,8 +92,8 @@ void pt_queue_init(void) {
     *q = *def;
 
     if (queue == pt_queue_reader_analyzer) {
-      int cpus = get_cpu_count();
-      q->size = (PROC_LINE_LENGTH + 1) * cpus * 4;
+      unsigned int cpus = get_cpu_count();
+      q->size = (size_t)(PROC_LINE_LENGTH + 1) * cpus * 4;
     }
 
     if (queue_init(q, q->size) != 0)
@@ -112,7 +112,7 @@ void pt_queue_init(void) {
   }
 }
 
-char *pt_queue_dequeue(pt_queue_t queue, int data_size) {
+char *pt_queue_dequeue(pt_queue_t queue, size_t data_size) {
   pt_queue_def_t *q = pt_queues + queue;
   pthread_mutex_lock(&q->mutex);
   while (queue_get_size(q->queue) == 0) {
@@ -125,7 +125,7 @@ char *pt_queue_dequeue(pt_queue_t queue, int data_size) {
   return data;
 }
 
-int pt_queue_enqueue(pt_queue_t queue, char *data, int size) {
+int pt_queue_enqueue(pt_queue_t queue, char *data, size_t size) {
   pt_queue_def_t *q = pt_queues + queue;
   pthread_mutex_lock(&q->mutex);
 
@@ -141,7 +141,7 @@ int pt_queue_enqueue(pt_queue_t queue, char *data, int size) {
   return ret;
 }
 
-static int queue_init(pt_queue_def_t *queue, int size) {
+static int queue_init(pt_queue_def_t *queue, size_t size) {
   queue->queue = queue_create(size);
   if (queue->queue == NULL) {
     return -1;
