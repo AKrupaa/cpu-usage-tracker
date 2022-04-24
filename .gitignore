@@ -69,3 +69,5 @@ __*
 *.tmp
 
 build
+
+*.tar.gz

@@ -40,7 +40,7 @@ void *printer_func(void *vargp) {
   }
   printf("\n");
 
-  while (pt_is_alive(pt_mutex_printer_alive)) {
+  while (pt_is_alive(pt_mutex_printer_alive) || !it_done()) {
     char *msg = malloc(sizeof(char) * 30);
     pt_set_alive(pt_mutex_printer_alive, true);
 

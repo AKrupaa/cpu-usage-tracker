@@ -10,7 +10,7 @@
 void *logger_func(void *vargp) {
   (void)vargp;
 
-  while (pt_is_alive(pt_mutex_logger_alive)) {
+  while (pt_is_alive(pt_mutex_logger_alive) || !it_done()) {
     pt_set_alive(pt_mutex_logger_alive, true);
 
     FILE *logger_file = fopen(LOGGER_FILE_NAME, "a");
@@ -25,6 +25,7 @@ void *logger_func(void *vargp) {
     fprintf(logger_file, "%s %s\n", asctime(timeinfo), buffer);
 
     fclose(logger_file);
+    // sleep(4);
   }
 
   return NULL;

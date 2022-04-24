@@ -7,7 +7,7 @@
 #include "runtime.h"
 void *watchdog_func(void *vargp) {
   (void)vargp;
-  while (pt_is_alive(pt_mutex_watchdog_alive)) {
+  while (pt_is_alive(pt_mutex_watchdog_alive) || !it_done()) {
     pt_set_alive(pt_mutex_watchdog_alive, true);
     sleep(2);
     check_threads();
@@ -21,7 +21,10 @@ void check_threads(void) {
        alive < pt_mutex_threads_alive_N; alive++) {
     if (!pt_is_alive(alive)) {
       fprintf(stderr, "Thread %d is dead!\n", alive - pt_mutex_queue_N);
-      // exit(1);
+      runtime_deinit();
+      printf("Exiting...\n");
+      exit(1);
     }
+    pt_set_alive(alive, false);
   }
 }

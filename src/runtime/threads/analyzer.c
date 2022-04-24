@@ -15,7 +15,7 @@ void *analyzer_func(void *vargp) {
   unsigned int cpus = get_cpu_count();
   size_t buffer_size = (size_t)((sizeof(char) * sizeof(double)) * cpus);
 
-  while (pt_is_alive(pt_mutex_analyzer_alive)) {
+  while (pt_is_alive(pt_mutex_analyzer_alive) || !it_done()) {
     pt_set_alive(pt_mutex_analyzer_alive, true);
     char *buffer = malloc(buffer_size);
     char *msg = malloc(sizeof(char) * 30);

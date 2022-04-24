@@ -10,7 +10,7 @@
 #include "configure.h"
 #include "cpu_info.h"
 
-// volatile static sig_atomic_t done = 0;
+static volatile sig_atomic_t done = 0;
 
 void term(int signum);
 
@@ -154,9 +154,7 @@ int queue_deinit(pt_queue_def_t *queue) {
   return 0;
 }
 
-void term(int signum) {
-  if (signum != SIGTERM) return;
-
+void runtime_deinit(void) {
   for (pt_mutex_t alive = pt_mutex_threads_alive_0;
        alive < pt_mutex_threads_alive_N; alive++) {
     pt_set_alive(alive, false);
@@ -168,7 +166,20 @@ void term(int signum) {
     pt_queue_def_t *q = pt_queues + queue;
     queue_deinit(q);
   }
+}
 
+bool it_done(void) {
+  if (done == 1) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void term(int signum) {
+  if (signum != SIGTERM) return;
+  done = true;
+  runtime_deinit();
   printf("Exiting...\n");
   exit(0);
 }

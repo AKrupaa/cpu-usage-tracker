@@ -14,7 +14,7 @@ void *reader_func(void *vargp) {
   size_t buffer_size = (size_t)(sizeof(char) * (PROC_LINE_LENGTH + 1) * cpus);
   char *buffer = malloc(buffer_size);
 
-  while (pt_is_alive(pt_mutex_reader_alive)) {
+  while (pt_is_alive(pt_mutex_reader_alive) || !it_done()) {
     pt_set_alive(pt_mutex_reader_alive, true);
     char *msg = malloc(sizeof(char) * 30);
 
